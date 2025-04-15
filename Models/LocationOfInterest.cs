@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace LocationSampling.Models;
 public partial class LocationOfInterest : ObservableObject
 {
-    static public readonly double MaxLocationSamples = 10.0;
+    static public readonly double MaxLocationSamples = 30.0;
 
     static public readonly double GoodPrecision = 3.0;
     static public readonly double PoorPrecision = 6.0;
