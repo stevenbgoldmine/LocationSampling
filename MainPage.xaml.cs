@@ -34,7 +34,7 @@ namespace LocationSampling
         {
             if (BindingContext is MainPageViewModel vm)
             {
-                vm.SelectedLocationGroup = e.Parameter as LocationOfInterest;
+                vm.SelectedLocationGroup = (LocationOfInterest)e.Parameter;
             }
         }
 
