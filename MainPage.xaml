@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LocationSampling.MainPage"
+             xmlns:vm="clr-namespace:LocationSampling"
+             xmlns:models="clr-namespace:LocationSampling.Models"
+            x:DataType="vm:MainPageViewModel">
+
+    <ContentPage.Resources>
+        <Style x:Key="FrameStyle" TargetType="Frame">
+            <Setter Property="BorderColor" Value="{AppThemeBinding Dark=White, Light=Grey}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+        </Style>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#F7931D" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Dark=White, Light=Black}" />
+        </Style>
+    </ContentPage.Resources>
+
+
+    <ScrollView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Location Groups -->
+            <Frame Grid.Row="0" Padding="10" Margin="5" CornerRadius="20" Style="{StaticResource FrameStyle}">
+                <CollectionView
+                    ItemsSource="{Binding LocationsOfInterest}"
+                    SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="40" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <ScrollView>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--Location of interest name -->
+                                    <Label Grid.Row="0"
+                                        Grid.Column="0"
+                                        VerticalTextAlignment="Center"
+                                        BackgroundColor="Transparent"
+                                        Text="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=Name}"
+                                        FontSize="40">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}}" Tapped="LocationGroup_Tapped" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+
+                                    <!-- Location sampled Indicator -->
+                                    <Image Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        Grid.Column="1"
+                                        HeightRequest="40"
+                                        WidthRequest="40"
+                                        BackgroundColor="Transparent"
+                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=ShowLocationPrecision}"
+                                        Source="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationPrecisionIndicator }">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}}" Tapped="CourseMark_ShowOnMap" />
+                                        </Image.GestureRecognizers>
+                                    </Image>
+
+                                    <!-- Location Timestamp -->
+                                    <Label Grid.Row="1"
+                                        Grid.ColumnSpan="2"
+                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=ShowLocationTimeStamp}"
+                                        Text="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationTimeStamp}"
+                                        FontAttributes="Bold"
+                                        FontSize="18">
+                                        <Label.Style>
+                                            <Style TargetType="{x:Type Label}">
+                                                <Style.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationIsStale}" Value="True">
+                                                        <Setter Property="TextColor" Value="Red" />
+                                                    </DataTrigger>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationIsStale}" Value="False">
+                                                        <Setter Property="TextColor" Value="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationPrecisionColor}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+
+                                    <!-- Location Sampling Progress -->
+                                    <ProgressBar Grid.Row="1"
+                                        Grid.ColumnSpan="2"
+                                        VerticalOptions="End"
+                                        Progress="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=SamplingProgress}"
+                                        ProgressColor="#F7931D" 
+                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=SamplingProgressIsVisible}" />
+
+                                    <!-- Location Diagnostics -->
+                                    <Label Grid.Row="2"
+                                        Grid.ColumnSpan="2"
+                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=ShowLocationDiagnostic}"
+                                        Text="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationDiagnostic}"
+                                        TextColor="{Binding Source={RelativeSource AncestorType={x:Type models:LocationOfInterest}}, Path=LocationPrecisionColor}"
+                                        FontSize="16" />
+
+                                </Grid>
+                            </ScrollView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Frame>
+
+            <Grid Grid.Row="1" Padding="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Text="Listen for Location Samples" VerticalTextAlignment="Center" />
+                <Switch Grid.Column="2" IsToggled="{Binding ListenForLocationSamples}" IsEnabled="{Binding CanChangeSamplingMethod}"/>
+            </Grid>
+
+            <Button Grid.Row="3"
+                Style="{StaticResource ButtonStyle}"
+                Margin="10"
+                Text="Clear" 
+                Command="{Binding ClearSamplesCommand}"/>
+
+        </Grid>
+    </ScrollView>
+
+</ContentPage>
